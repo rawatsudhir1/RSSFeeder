@@ -9,3 +9,14 @@ C:\Users\sudhiraw\source\repos\ReadRssFeed\ReadRssFeed\obj\Debug\netcoreapp2.1\R
 C:\Users\sudhiraw\source\repos\ReadRssFeed\ReadRssFeed\bin\Debug\netcoreapp2.1\ReadRssFeed.pdb
 C:\Users\sudhiraw\source\repos\ReadRssFeed\ReadRssFeed\obj\Debug\netcoreapp2.1\ReadRssFeed.dll
 C:\Users\sudhiraw\source\repos\ReadRssFeed\ReadRssFeed\obj\Debug\netcoreapp2.1\ReadRssFeed.pdb
+D:\codesamples\RSSFeeder\ReadRssFeed\ReadRssFeed\bin\Debug\netcoreapp2.1\ReadRssFeed.deps.json
+D:\codesamples\RSSFeeder\ReadRssFeed\ReadRssFeed\bin\Debug\netcoreapp2.1\ReadRssFeed.runtimeconfig.json
+D:\codesamples\RSSFeeder\ReadRssFeed\ReadRssFeed\bin\Debug\netcoreapp2.1\ReadRssFeed.runtimeconfig.dev.json
+D:\codesamples\RSSFeeder\ReadRssFeed\ReadRssFeed\bin\Debug\netcoreapp2.1\ReadRssFeed.dll
+D:\codesamples\RSSFeeder\ReadRssFeed\ReadRssFeed\bin\Debug\netcoreapp2.1\ReadRssFeed.pdb
+D:\codesamples\RSSFeeder\ReadRssFeed\ReadRssFeed\obj\Debug\netcoreapp2.1\ReadRssFeed.csprojAssemblyReference.cache
+D:\codesamples\RSSFeeder\ReadRssFeed\ReadRssFeed\obj\Debug\netcoreapp2.1\ReadRssFeed.csproj.CoreCompileInputs.cache
+D:\codesamples\RSSFeeder\ReadRssFeed\ReadRssFeed\obj\Debug\netcoreapp2.1\ReadRssFeed.AssemblyInfoInputs.cache
+D:\codesamples\RSSFeeder\ReadRssFeed\ReadRssFeed\obj\Debug\netcoreapp2.1\ReadRssFeed.AssemblyInfo.cs
+D:\codesamples\RSSFeeder\ReadRssFeed\ReadRssFeed\obj\Debug\netcoreapp2.1\ReadRssFeed.dll
+D:\codesamples\RSSFeeder\ReadRssFeed\ReadRssFeed\obj\Debug\netcoreapp2.1\ReadRssFeed.pdb

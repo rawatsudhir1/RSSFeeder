@@ -1212,11 +1212,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\sudhiraw\\source\\repos\\ReadRssFeed\\ReadRssFeed\\ReadRssFeed.csproj",
+      "projectUniqueName": "D:\\codesamples\\RSSFeeder\\ReadRssFeed\\ReadRssFeed\\ReadRssFeed.csproj",
       "projectName": "ReadRssFeed",
-      "projectPath": "C:\\Users\\sudhiraw\\source\\repos\\ReadRssFeed\\ReadRssFeed\\ReadRssFeed.csproj",
+      "projectPath": "D:\\codesamples\\RSSFeeder\\ReadRssFeed\\ReadRssFeed\\ReadRssFeed.csproj",
       "packagesPath": "C:\\Users\\sudhiraw\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\sudhiraw\\source\\repos\\ReadRssFeed\\ReadRssFeed\\obj\\",
+      "outputPath": "D:\\codesamples\\RSSFeeder\\ReadRssFeed\\ReadRssFeed\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

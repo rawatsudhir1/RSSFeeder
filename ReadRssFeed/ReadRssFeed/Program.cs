@@ -9,20 +9,31 @@ using System.Xml;
 
 namespace ReadRssFeed
 {
-//    Create table feedrecord(
-//      feedID int NOT NULL IDENTITY(1,1) PRIMARY KEY,
-//      actualLink varchar(max),
-//  title varchar(max),
-//  Summary varchar(max),
-//  appendstring varchar(max),
-//  Shortenlink varchar(200),
-//  isPosted varchar(1)
-//);
+    //    Create table feedrecord(
+    //      feedID int NOT NULL IDENTITY(1,1) PRIMARY KEY,
+    //      actualLink varchar(max),
+    //  title varchar(max),
+    //  Summary varchar(max),
+    //  appendstring varchar(max),
+    //  Shortenlink varchar(200),
+    //  isPosted varchar(1)
+    //);
 
     class Program
     {
         static void Main(string[] args)
 
+        {
+
+
+            
+            GetRSSFeed("KOREA"); //expected parameter is either KOREA or ENGLISH
+
+            Console.WriteLine();
+        }
+
+
+        public static void GetRSSFeed(string language)
         {
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
             builder.DataSource = "sudhirawrssfeeder.database.windows.net";
@@ -30,24 +41,44 @@ namespace ReadRssFeed
             builder.Password = "P@$$w0rd@123";
             builder.InitialCatalog = "rssfeeddb";
             string stmt = "INSERT INTO feedrecord(actualLink,title, Summary, appendstring, Shortenlink, isPosted) VALUES(@actualLink,@title, @Summary, @appendstring, @Shortenlink, @isPosted)";
-            string str_Append_Query = "?wt.mc_id=AID2463800_QSG_SCL_361865&ocid=AID2463800_QSG_SCL_361865&utm_medium=Owned%20%26%20Operated&utm_campaign=FY20_APAC_Dev%20Community_CFT_Internal%20Social";
-          
-            XmlReader reader = XmlReader.Create("https://azurecomcdn.azureedge.net/en-us/updates/feed/");
+            string str_Append_Query="";
+            XmlReader reader= XmlReader.Create("https://azurecomcdn.azureedge.net/en-us/updates/feed/"); //Default is ENglish
+            string fileName = "";
+            if (language.ToUpper() == "ENGLISH")
+            {
+                reader = XmlReader.Create("https://azurecomcdn.azureedge.net/en-us/updates/feed/");
+                str_Append_Query = "?wt.mc_id=AID2463800_QSG_SCL_361865&ocid=AID2463800_QSG_SCL_361865&utm_medium=Owned%20%26%20Operated&utm_campaign=FY20_APAC_Dev%20Community_CFT_Internal%20Social";
+                fileName = @"C:\Temp\" + DateTime.Today.Date.DayOfWeek.ToString() + "_ENGLISH_socialpost.txt";
+                FileStream fsc = File.Create(fileName);
+                fsc.Close();
+            }
+            if (language.ToUpper() == "KOREA")
+            {
+                reader = XmlReader.Create("https://azurecomcdn.azureedge.net/en-us/updates/feed/");
+                str_Append_Query = "/?wt.mc_id=AID2463800_QSG_SCL_361864&ocid=AID2463800_QSG_SCL_361864&utm_medium=Owned%20%26%20Operated&utm_campaign=FY20_APAC_Dev%20Community_CFT_Internal%20Social";
+                fileName = @"C:\Temp\" + DateTime.Today.Date.DayOfWeek.ToString() + "_KOREA_socialpost.txt";
+                FileStream fsc = File.Create(fileName);
+                fsc.Close();
+            }
+
             SyndicationFeed feed = SyndicationFeed.Load(reader);
             int i = 1;
 
-            string fileName = @"C:\Temp\"+ DateTime.Today.Date.DayOfWeek.ToString() +"_socialpost.txt";
-            FileStream fsc = File.Create(fileName);
-            fsc.Close();
+
 
             foreach (SyndicationItem item in feed.Items)
             {
-                string strTitle = item.Title.Text.ToString().Replace("Azure","#Azure");
+                string strTitle = item.Title.Text.ToString().Replace("Azure", "#Azure");
                 Console.WriteLine(strTitle);
                 Console.WriteLine(item.Summary.Text.ToString());
                 //Console.WriteLine(item.BaseUri.AbsoluteUri);
-                Console.WriteLine( "Link :- " + item.Links[0].Uri.ToString());
-                string strNewlink = item.Links[0].Uri.ToString() + str_Append_Query;
+                Console.WriteLine("Link :- " + item.Links[0].Uri.ToString());
+                string strNewlink = item.Links[0].Uri.ToString().Replace("en-us", "ko-kr") + str_Append_Query;
+                if (language=="kOREA")
+                {
+                     strNewlink = item.Links[0].Uri.ToString().Replace("en-us", "ko-kr") + str_Append_Query;
+                }
+                
                 Console.WriteLine("New Link :- " + strNewlink);
                 string strShortenLink = "http://tinyurl.com/api-create.php?url=" + strNewlink;
                 var request = WebRequest.Create(strShortenLink);
@@ -77,9 +108,9 @@ namespace ReadRssFeed
                     cmd.Parameters["@isPosted"].Value = 'N';
                     cmd.ExecuteNonQuery();
                 }
-                Console.WriteLine("Record added - " + i );
+                Console.WriteLine("Record added - " + i);
                 i = i + 1;
-              
+
 
                 try
                 {
@@ -90,7 +121,7 @@ namespace ReadRssFeed
                     //}
 
                     // Create a new file     
-                    using (FileStream fs = File.Open(fileName,FileMode.Append))
+                    using (FileStream fs = File.Open(fileName, FileMode.Append))
                     {
                         byte[] newline = Encoding.ASCII.GetBytes(Environment.NewLine);
                         // Add some text to file    
@@ -116,7 +147,7 @@ namespace ReadRssFeed
                     }
 
                     // Open the stream and read it back.    
-                    
+
                 }
                 catch (Exception Ex)
                 {
@@ -127,7 +158,6 @@ namespace ReadRssFeed
 
             }
 
-            Console.WriteLine();
-        }
+       }
     }
 }
