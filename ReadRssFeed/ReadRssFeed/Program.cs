@@ -1,4 +1,7 @@
-﻿using System;
+﻿//Author:- Sudhir Rawat 
+//Purpose :- Get azure service and blog update, add query string and hashtag
+
+using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
@@ -9,77 +12,47 @@ using System.Xml;
 
 namespace ReadRssFeed
 {
-    //    Create table feedrecord(
-    //      feedID int NOT NULL IDENTITY(1,1) PRIMARY KEY,
-    //      actualLink varchar(max),
-    //  title varchar(max),
-    //  Summary varchar(max),
-    //  appendstring varchar(max),
-    //  Shortenlink varchar(200),
-    //  isPosted varchar(1)
-    //);
-
+    
     class Program
     {
         static void Main(string[] args)
 
         {
-
-
-            
-            GetRSSFeed("KOREA"); //expected parameter is either KOREA or ENGLISH
+            //GetRSSFeed function takes 3 parameter
+            //1) Feed URL :- Url to the RSS feed 
+            //2) File Name append:- Any string you want to add to final output file name
+            //3) Query string to add
 
             Console.WriteLine();
+            Console.WriteLine("Working on Azure Service update");
+
+
+
+            GetRSSFeed("https://azurecomcdn.azureedge.net/en-us/updates/feed/", "_AzureUpdate_English_Socialpost", "?wt.mc_id=AID2463800_QSG_SCL_361865&ocid=AID2463800_QSG_SCL_361865&utm_medium=Owned%20%26%20Operated&utm_campaign=FY20_APAC_Dev%20Community_CFT_Internal%20Social");
+            Console.WriteLine("Working on Azure Blog update");
+            GetRSSFeed("https://azurecomcdn.azureedge.net/en-us/blog/feed/", "_AzureBlog_English_Socialpost", "?wt.mc_id=AID2463800_QSG_SCL_361865&ocid=AID2463800_QSG_SCL_361865&utm_medium=Owned%20%26%20Operated&utm_campaign=FY20_APAC_Dev%20Community_CFT_Internal%20Social");
+
+            Console.WriteLine("Done");
         }
 
-
-        public static void GetRSSFeed(string language)
+        public static void GetRSSFeed(string rssfeedlink, string append2filename, string queryString)
         {
-            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
-            builder.DataSource = "sudhirawrssfeeder.database.windows.net";
-            builder.UserID = "sudhiraw";
-            builder.Password = "P@$$w0rd@123";
-            builder.InitialCatalog = "rssfeeddb";
-            string stmt = "INSERT INTO feedrecord(actualLink,title, Summary, appendstring, Shortenlink, isPosted) VALUES(@actualLink,@title, @Summary, @appendstring, @Shortenlink, @isPosted)";
-            string str_Append_Query="";
-            XmlReader reader= XmlReader.Create("https://azurecomcdn.azureedge.net/en-us/updates/feed/"); //Default is ENglish
-            string fileName = "";
-            if (language.ToUpper() == "ENGLISH")
-            {
-                reader = XmlReader.Create("https://azurecomcdn.azureedge.net/en-us/updates/feed/");
-                str_Append_Query = "?wt.mc_id=AID2463800_QSG_SCL_361865&ocid=AID2463800_QSG_SCL_361865&utm_medium=Owned%20%26%20Operated&utm_campaign=FY20_APAC_Dev%20Community_CFT_Internal%20Social";
-                fileName = @"C:\Temp\" + DateTime.Today.Date.DayOfWeek.ToString() + "_ENGLISH_socialpost.txt";
-                FileStream fsc = File.Create(fileName);
-                fsc.Close();
-            }
-            if (language.ToUpper() == "KOREA")
-            {
-                reader = XmlReader.Create("https://azurecomcdn.azureedge.net/en-us/updates/feed/");
-                str_Append_Query = "/?wt.mc_id=AID2463800_QSG_SCL_361864&ocid=AID2463800_QSG_SCL_361864&utm_medium=Owned%20%26%20Operated&utm_campaign=FY20_APAC_Dev%20Community_CFT_Internal%20Social";
-                fileName = @"C:\Temp\" + DateTime.Today.Date.DayOfWeek.ToString() + "_KOREA_socialpost.txt";
-                FileStream fsc = File.Create(fileName);
-                fsc.Close();
-            }
 
+            
+            XmlReader reader= XmlReader.Create(rssfeedlink); //Default is ENglish
+            string fileName = "";         
+            
+            fileName = @"C:\Temp\" + DateTime.Today.Date.DayOfWeek.ToString() + append2filename +".txt";
+            FileStream fsc = File.Create(fileName);
+            fsc.Close();   
             SyndicationFeed feed = SyndicationFeed.Load(reader);
-            int i = 1;
-
-
-
+         
             foreach (SyndicationItem item in feed.Items)
             {
-                string strTitle = item.Title.Text.ToString().Replace("Azure", "#Azure");
+                string strTitle = item.Title.Text.ToString().Replace("Azure", "#Azure") + " #azure4developers";
                 Console.WriteLine(strTitle);
-                Console.WriteLine(item.Summary.Text.ToString());
-                //Console.WriteLine(item.BaseUri.AbsoluteUri);
-                Console.WriteLine("Link :- " + item.Links[0].Uri.ToString());
-                string strNewlink = item.Links[0].Uri.ToString().Replace("en-us", "ko-kr") + str_Append_Query;
-                if (language=="kOREA")
-                {
-                     strNewlink = item.Links[0].Uri.ToString().Replace("en-us", "ko-kr") + str_Append_Query;
-                }
+                string strNewlink = item.Links[0].Uri.ToString() + queryString;     
                 
-                Console.WriteLine("New Link :- " + strNewlink);
                 string strShortenLink = "http://tinyurl.com/api-create.php?url=" + strNewlink;
                 var request = WebRequest.Create(strShortenLink);
                 var res = request.GetResponse();
@@ -90,36 +63,10 @@ namespace ReadRssFeed
 
                     Console.WriteLine(strShortenLink);
                 }
-                using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
-                {
-                    connection.Open();
-                    SqlCommand cmd = new SqlCommand(stmt, connection);
-                    cmd.Parameters.Add("@actualLink", SqlDbType.VarChar);
-                    cmd.Parameters.Add("@title", SqlDbType.VarChar);
-                    cmd.Parameters.Add("@Summary", SqlDbType.VarChar);
-                    cmd.Parameters.Add("@appendstring", SqlDbType.VarChar);
-                    cmd.Parameters.Add("@Shortenlink", SqlDbType.VarChar);
-                    cmd.Parameters.Add("@isPosted", SqlDbType.VarChar);
-                    cmd.Parameters["@actualLink"].Value = item.Links[0].Uri.ToString();
-                    cmd.Parameters["@title"].Value = strTitle;
-                    cmd.Parameters["@Summary"].Value = item.Summary.Text.ToString();
-                    cmd.Parameters["@appendstring"].Value = str_Append_Query;
-                    cmd.Parameters["@Shortenlink"].Value = strreceiveShortenLink;
-                    cmd.Parameters["@isPosted"].Value = 'N';
-                    cmd.ExecuteNonQuery();
-                }
-                Console.WriteLine("Record added - " + i);
-                i = i + 1;
-
 
                 try
                 {
-                    // Check if file already exists. If yes, delete it.     
-                    //if (File.Exists(fileName))
-                    //{
-                    //    File.Delete(fileName);
-                    //}
-
+                    
                     // Create a new file     
                     using (FileStream fs = File.Open(fileName, FileMode.Append))
                     {
@@ -129,10 +76,13 @@ namespace ReadRssFeed
                         fs.Write(title, 0, title.Length);
                         fs.Write(newline, 0, newline.Length);
 
+                        Byte[] publishDate = new UTF8Encoding(true).GetBytes(item.PublishDate.ToString());
+                        fs.Write(publishDate, 0, publishDate.Length);
+                        fs.Write(newline, 0, newline.Length);
+
                         byte[] summary = new UTF8Encoding(true).GetBytes(item.Summary.Text.ToString());
                         fs.Write(summary, 0, summary.Length);
                         fs.Write(newline, 0, newline.Length);
-
 
                         byte[] link = new UTF8Encoding(true).GetBytes(strreceiveShortenLink);
                         fs.Write(link, 0, link.Length);
@@ -144,20 +94,15 @@ namespace ReadRssFeed
                         fs.Write(newline, 0, newline.Length);
 
                         fs.Close();
-                    }
-
-                    // Open the stream and read it back.    
-
+                    }    
                 }
                 catch (Exception Ex)
                 {
                     Console.WriteLine(Ex.ToString());
                 }
-
-
-
             }
-
-       }
+        }
+        
     }
 }
+
