@@ -1,4 +1,4 @@
-# RSS Feeder Read and Write
+# RSS Feeder Read and Store
 
 This simple project reads rss feed, add hashtags, extra query string, shorten the URL and store it in a notepad file.
 
